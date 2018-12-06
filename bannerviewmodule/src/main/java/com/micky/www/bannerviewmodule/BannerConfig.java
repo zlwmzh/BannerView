@@ -9,4 +9,6 @@ public class BannerConfig {
 
     // 默认的广告Item项
     public static final int DEFAULT_ITEM_BANNER = -0x01;
+    // 默认布局类型
+    public static final int DEFAULT_ITEM_BANNER_TYPE = 0x00;
 }
