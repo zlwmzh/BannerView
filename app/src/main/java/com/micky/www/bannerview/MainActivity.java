@@ -14,6 +14,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private BannerView<String> mBannerView;
+    private BannerView<String> mBannerView2;
     private List<String> mList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +22,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mBannerView = findViewById(R.id.bannerview);
+        mBannerView2 = findViewById(R.id.bannerview_2);
         mBannerView.setCallBack(new BannerAdapterCallBack<String>() {
+            @Override
+            public void onCallBack(View view, String s) {
+                SimpleDraweeView  simpleDraweeView = (SimpleDraweeView) view;
+                simpleDraweeView.setImageURI(s);
+            }
+        });
+        mBannerView2.setCallBack(new BannerAdapterCallBack<String>() {
             @Override
             public void onCallBack(View view, String s) {
                 SimpleDraweeView  simpleDraweeView = (SimpleDraweeView) view;
@@ -42,5 +51,20 @@ public class MainActivity extends AppCompatActivity {
 
         mBannerView.setListData(mList);
         mBannerView.start();
+
+        mBannerView2.setListData(mList);
+        mBannerView2.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mBannerView.pauseAutoPlay();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        mBannerView.continueAutoPlay();
     }
 }

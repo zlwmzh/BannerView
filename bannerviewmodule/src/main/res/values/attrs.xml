@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BannerView">
+        <attr name="indicatorwidth" format="dimension|reference"/>
+        <attr name="indicatorheight" format="dimension|reference"/>
+        <attr name="indicatormargin" format="dimension|reference"/>
+        <attr name="indicatordrawable" format="reference"/>
+        <attr name="delaytime" format="integer"/>
+        <attr name="isautoplay" format="boolean"/>
+    </declare-styleable>
+</resources>
