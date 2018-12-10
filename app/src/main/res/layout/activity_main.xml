@@ -7,8 +7,10 @@
    >
  <com.micky.www.bannerviewmodule.BannerView
      android:layout_width="match_parent"
-     android:layout_height="300dp"
-     android:id="@+id/bannerview"></com.micky.www.bannerviewmodule.BannerView>
+     android:layout_height="200dp"
+     android:id="@+id/bannerview"
+     app:isautoplay="true"
+     app:speed="100"></com.micky.www.bannerviewmodule.BannerView>
 
  <com.micky.www.bannerviewmodule.BannerView
      android:layout_width="match_parent"
@@ -18,6 +20,16 @@
      app:indicatorwidth="30px"
      app:delaytime="1000"
      app:isautoplay="true"
+     app:indicatorgravity="left"
      app:indicatordrawable="@drawable/select_indicator_1"
+     app:speed="200"
      ></com.micky.www.bannerviewmodule.BannerView>
+ <com.micky.www.bannerviewmodule.BannerView
+     android:layout_width="match_parent"
+     android:layout_height="200dp"
+     android:id="@+id/bannerview_3"
+     app:delaytime="1000"
+     app:isautoplay="true"
+     app:indicatorgravity="right"
+     app:speed="50"></com.micky.www.bannerviewmodule.BannerView>
 </LinearLayout>

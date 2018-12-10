@@ -7,5 +7,11 @@
         <attr name="indicatordrawable" format="reference"/>
         <attr name="delaytime" format="integer"/>
         <attr name="isautoplay" format="boolean"/>
+        <attr name="speed" format="float"/>
+        <attr name="indicatorgravity">
+          <enum name="left" value="5"/>
+          <enum name="center" value="6"/>
+          <enum name="right" value="7"/>
+        </attr>
     </declare-styleable>
 </resources>

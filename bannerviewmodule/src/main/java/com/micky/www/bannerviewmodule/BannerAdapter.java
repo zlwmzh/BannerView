@@ -52,7 +52,7 @@ public class BannerAdapter<T> extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-       T t = mList.get(position);
+       T t = mList.get(position%mList.size());
        if (mCallBack == null)
        {
            Toast.makeText(context,"请接入回掉监听",Toast.LENGTH_LONG).show();
@@ -63,7 +63,7 @@ public class BannerAdapter<T> extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount() {
-        return mList == null ? 0 : mList.size();
+        return mList == null || mList.size() == 0 ? 0 : Integer.MAX_VALUE;
     }
 
     /**
@@ -75,6 +75,14 @@ public class BannerAdapter<T> extends RecyclerView.Adapter{
         this.mCallBack = callBack;
     }
 
+    /**
+     *  设置自定义布局id
+     * @param layoutId
+     */
+    public void setLayoutId(int layoutId)
+    {
+        this.mLayoutId = layoutId;
+    }
 
     class DefaultViewHolder extends RecyclerView.ViewHolder {
         SimpleDraweeView simpleDraweeView;

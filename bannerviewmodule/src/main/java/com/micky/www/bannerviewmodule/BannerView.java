@@ -8,11 +8,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -53,16 +57,22 @@ public class BannerView<T> extends FrameLayout {
     protected int mIndicatorHeight = 64;
     // 每个指示器之间的间距
     protected int mIndicatorMargin = 10;
+    // 指示器的位置 居中、左右
+    private int mIndicatorGravity = BannerConfig.CENTER;
     // 指示器Drawable的资源id
     protected int mIndicatorDrawableId = R.drawable.selector_indicator;
     // 回掉接口
     protected BannerAdapterCallBack<T> mBannerCallBack;
     // 每一张广告停留时间
     protected  int mDelayTime = BannerConfig.DELAY_TIME;
+    // 设置滑动速度
+    protected float mSmoothSpeed = BannerConfig.SPEED;
     // 当前广告的位置
     protected int mCurrentBannerPosition = 0;
     // 是否自动播放Banner
     protected boolean isAutoPlay = BannerConfig.AUTO_PLAY_OPEN;
+    // 用户是否触摸BannerView
+    protected boolean isTouchView = BannerConfig.USER_NOT_TOUCH;
 
     protected WeakHandler handler = new WeakHandler();
 
@@ -118,9 +128,12 @@ public class BannerView<T> extends FrameLayout {
         mIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorheight,mIndicatorHeight);
         mIndicatorWidth = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorwidth,mIndicatorWidth);
         mIndicatorMargin = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatormargin,mIndicatorMargin);
+        mIndicatorGravity = typedArray.getInt(R.styleable.BannerView_indicatorgravity,BannerConfig.CENTER);
         mIndicatorDrawableId = typedArray.getResourceId(R.styleable.BannerView_indicatordrawable,mIndicatorDrawableId);
         mDelayTime = typedArray.getInt(R.styleable.BannerView_delaytime,mDelayTime);
+        mSmoothSpeed = typedArray.getFloat(R.styleable.BannerView_speed,BannerConfig.SPEED);
         isAutoPlay = typedArray.getBoolean(R.styleable.BannerView_isautoplay,isAutoPlay);
+        typedArray.recycle();
     }
 
     /**
@@ -131,7 +144,24 @@ public class BannerView<T> extends FrameLayout {
         mList = new ArrayList<>();
         mBannerAdapter = new BannerAdapter<T>(context,mList);
         // 设置横向滚动
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context)
+        {
+            @Override
+            public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+               // super.smoothScrollToPosition(recyclerView, state, position);
+                // 此处用户设置滑动速度
+                LinearSmoothScroller smoothScroller =
+                        new LinearSmoothScroller(recyclerView.getContext()) {
+                            // 返回：滑过1px时经历的时间(ms)。
+                            @Override
+                            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                                return mSmoothSpeed / displayMetrics.densityDpi;
+                            }
+                        };
+                smoothScroller.setTargetPosition(position);
+                startSmoothScroll(smoothScroller);
+            }
+        };
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mBannerAdapter);
@@ -148,6 +178,7 @@ public class BannerView<T> extends FrameLayout {
             }
         };
         pagerSnapHelper.attachToRecyclerView(mRecyclerView);
+
     }
 
     /**
@@ -158,15 +189,94 @@ public class BannerView<T> extends FrameLayout {
     {
         // 设置当前位置
         mCurrentBannerPosition = position;
-        if (position < 0 || position >= mDefaultIndicatorView.getChildCount())
+        if (position < 0)
         {
             // 选中位置不正确的话，不切换指示器
             return;
         }
         // 获取对应位置的指示器
-        RadioButton rb = (RadioButton) mDefaultIndicatorView.getChildAt(position);
+        RadioButton rb = (RadioButton) mDefaultIndicatorView.getChildAt(position%maxBannerCount);
         // 设置为选中状态
         rb.setChecked(true);
+    }
+
+    /**
+     * 设置单个指示器的宽高
+     * @param width
+     * @param height
+     * @return
+     */
+    public BannerView setIndicatorWH(int width, int height)
+    {
+        this.mIndicatorWidth = width;
+        this.mIndicatorHeight = height;
+        return this;
+    }
+
+    /**
+     *  设置单个指示器之间的间距
+     * @param margin
+     * @return
+     */
+    public BannerView setIndicatorMargin(int margin)
+    {
+        this.mIndicatorMargin = margin;
+        return this;
+    }
+
+    /**
+     *  设置指示器的样式；你需要在出入一个drawable文件。定义好状态
+     * @param indicatorDrawableId
+     * @return
+     */
+    public BannerView setIndicatorDrawableId(int indicatorDrawableId)
+    {
+        this.mIndicatorDrawableId = indicatorDrawableId;
+        return this;
+    }
+
+    /**
+     *  设置每张广告停留时间
+     * @param delayTime
+     * @return
+     */
+    public BannerView setDelayTime(int delayTime)
+    {
+        this.mDelayTime = delayTime;
+        return this;
+    }
+
+    /**
+     * 设置滑动速度
+     * @param speed
+     * @return
+     */
+    public BannerView setSpeend(float speed)
+    {
+        this.mSmoothSpeed = speed;
+        return this;
+    }
+
+    /**
+     *  设置是否开启自动播放
+     * @param isAutoPlay
+     * @return
+     */
+    public BannerView setIsAutoPlay(boolean isAutoPlay)
+    {
+        this.isAutoPlay = isAutoPlay;
+        return this;
+    }
+
+    /**
+     *  设置自定义Banner布局
+     * @param bannerLayout
+     * @return
+     */
+    public BannerView setBannerLayout(int bannerLayout)
+    {
+        mBannerAdapter.setLayoutId(bannerLayout);
+        return this;
     }
 
     /**
@@ -250,10 +360,36 @@ public class BannerView<T> extends FrameLayout {
     }
 
     /**
+     *  设置指示器的位置
+     * @param gravity
+     * @return
+     */
+    public BannerView setIndicatorGravity(int gravity)
+    {
+        switch (gravity)
+        {
+            case BannerConfig.LEFT:
+                this.mIndicatorGravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+                break;
+            case BannerConfig.CENTER:
+                this.mIndicatorGravity = Gravity.CENTER;
+                break;
+            case BannerConfig.RIGHT:
+                this.mIndicatorGravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+                break;
+        }
+        return this;
+    }
+
+
+    /**
      * 创建指示器
      */
     protected void createIndicator()
     {
+        // 设置指示器位置
+        setIndicatorGravity(mIndicatorGravity);
+        mIndicatorContainer.setGravity(mIndicatorGravity);
         // 移除底部布局的所有view
         mIndicatorContainer.removeAllViews();
         // 添加默认的指示器布局
@@ -290,7 +426,7 @@ public class BannerView<T> extends FrameLayout {
                     return;
                 }
                 // 处理自动轮询
-                mCurrentBannerPosition = (mCurrentBannerPosition+1) % (maxBannerCount);
+                mCurrentBannerPosition ++;
                 Log.d(TAG,"当前位置："+mCurrentBannerPosition+"总大小："+maxBannerCount);
                 mRecyclerView.smoothScrollToPosition(mCurrentBannerPosition);
                 moveIndicator(mCurrentBannerPosition);
@@ -299,4 +435,27 @@ public class BannerView<T> extends FrameLayout {
             handler.postDelayed(this,mDelayTime);
         }
     };
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (isAutoPlay)
+        {
+            int action = ev.getAction();
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
+                    || action == MotionEvent.ACTION_OUTSIDE) {
+                // 设置用户触摸离开
+                isTouchView = BannerConfig.USER_NOT_TOUCH;
+                startAutoPlay();
+            } else if (action == MotionEvent.ACTION_DOWN) {
+                // 设置用户触摸
+                isTouchView = BannerConfig.USER_TOUCHING;
+                stopAutoPlay();
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public void releaseBanner() {
+        handler.removeCallbacksAndMessages(null);
+    }
 }

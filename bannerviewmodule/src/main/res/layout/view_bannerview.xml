@@ -14,5 +14,6 @@
         android:id="@+id/indicator_container"
         android:orientation="horizontal"
         android:layout_gravity="bottom"
+        android:paddingBottom="5dp"
         ></LinearLayout>
 </FrameLayout>
