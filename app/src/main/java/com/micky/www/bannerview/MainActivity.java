@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.micky.www.bannerviewmodule.BannerAdapterCallBack;
+import com.micky.www.bannerviewmodule.BannerConfig;
 import com.micky.www.bannerviewmodule.BannerView;
 
 import java.util.ArrayList;
@@ -68,7 +69,23 @@ public class MainActivity extends AppCompatActivity {
         mList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544097325388&di=d8e4237987082a2a1ea7f7d0a77265fa&imgtype=0&src=http%3A%2F%2Fwww.szthks.com%2Flocalimg%2F687474703a2f2f6777312e616c6963646e2e636f6d2f62616f2f75706c6f616465642f69362f54316f48692e5865686c5858614f715473335f3035313331372e6a7067.jpg");
         mList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544692107&di=2796e41279fbd54d7a2a43a70a2c7f9b&imgtype=jpg&er=1&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01724a58772f59a8012060c8ada29f.png%401280w_1l_2o_100sh.png");
 
+        // 设置指示器位置
+        mBannerView.setIndicatorGravity(BannerConfig.CENTER);
+        // 设置Banner停留时间
+        mBannerView.setDelayTime(1 * 1000);
+        // 设置指示器样式
+        mBannerView.setIndicatorDrawableId(R.drawable.selector_indicator);
+        // 设置指示器间距
+        mBannerView.setIndicatorMargin(10);
+        // 设置单个指示器的宽高
+        mBannerView.setIndicatorWH(30,30);
+        // 设置是否开启自动轮播，默认开启
+        mBannerView.setIsAutoPlay(true);
+        // 设置滑动速度
+        mBannerView.setSpeend(150f);
+        // 设置数据源，当所有属性设置完成后，才可设置数据源
         mBannerView.setListData(mList);
+        // 开始起轮播，这一步一定最后调用
         mBannerView.start();
 
         mBannerView2.setListData(mList);
@@ -89,11 +106,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mBannerView.pauseAutoPlay();
+        mBannerView2.pauseAutoPlay();
+        mBannerView3.pauseAutoPlay();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         mBannerView.continueAutoPlay();
+        mBannerView2.continueAutoPlay();
+        mBannerView3.continueAutoPlay()
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBannerView.releaseBanner();
+        mBannerView2.releaseBanner();
+        mBannerView3.releaseBanner();
     }
 }

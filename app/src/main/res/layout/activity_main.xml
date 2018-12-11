@@ -23,6 +23,7 @@
      app:indicatorgravity="left"
      app:indicatordrawable="@drawable/select_indicator_1"
      app:speed="200"
+     android:layout_marginTop="5dp"
      ></com.micky.www.bannerviewmodule.BannerView>
  <com.micky.www.bannerviewmodule.BannerView
      android:layout_width="match_parent"
@@ -31,5 +32,6 @@
      app:delaytime="1000"
      app:isautoplay="true"
      app:indicatorgravity="right"
-     app:speed="50"></com.micky.www.bannerviewmodule.BannerView>
+     app:speed="50"
+     android:layout_marginTop="5dp"></com.micky.www.bannerviewmodule.BannerView>
 </LinearLayout>
