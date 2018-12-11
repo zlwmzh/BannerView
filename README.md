@@ -104,3 +104,4 @@
 |releaseBanner()|释放BannerView(可在页面销毁时调用)|
 
 相关代码可参考上面demo中简单代码！！！
+
