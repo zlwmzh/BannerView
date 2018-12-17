@@ -1,6 +1,7 @@
 package com.micky.www.bannerviewmodule;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -9,12 +10,11 @@ import com.facebook.drawee.backends.pipeline.Fresco;
  * Banner必须初始化的东西
  */
 
-public class App extends Application {
+public class Banner {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        // 自带的图片处理框架
-        Fresco.initialize(this);
+    public static void init(Context context)
+    {
+        Fresco.initialize(context);
     }
+
 }

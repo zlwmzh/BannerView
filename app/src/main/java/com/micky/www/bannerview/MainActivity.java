@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         mBannerView.continueAutoPlay();
         mBannerView2.continueAutoPlay();
-        mBannerView3.continueAutoPlay()
+        mBannerView3.continueAutoPlay();
     }
 
     @Override
