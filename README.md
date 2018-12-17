@@ -14,8 +14,13 @@
 
 # 使用方式
 ### 第一步. 添加依赖： 
-  `compile 'compile 'com.mickywu:bannerview:1.0.0' `   
+  `compile 'compile 'com.mickywu:bannerview:1.0.1' `   
 ### 第二步. 布局中引用BannerView
+在Application中初始化：
+```Java
+Banner.init(this);
+```
+然后布局中引用：
 ```Java
 <com.micky.www.bannerviewmodule.BannerView
      android:layout_width="match_parent"
